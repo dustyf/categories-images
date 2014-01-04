@@ -66,41 +66,46 @@ function z_init() {
 }
 add_action( 'admin_init', 'z_init' );
 
-// add image field in add form
+/**
+ * Adding the Image Upload Field on the Add New Taxonomy Form
+ */
 function z_add_texonomy_field() {
-	if ( version_compare( get_bloginfo('version'), '3.5', '>=' ) ) {
+	if ( version_compare( get_bloginfo( 'version' ), '3.5', '>=' ) ) {
 		wp_enqueue_media();
 	} else {
-		wp_enqueue_style('thickbox');
-		wp_enqueue_script('thickbox');
+		wp_enqueue_style( 'thickbox' );
+		wp_enqueue_script( 'thickbox' );
 	}
 	
 	echo '<div class="form-field">
-		<label for="taxonomy_image">' . __('Image', 'zci') . '</label>
+		<label for="taxonomy_image">' . __( 'Image', 'zci' ) . '</label>
 		<input type="text" name="taxonomy_image" id="taxonomy_image" value="" />
 		<br/>
-		<button class="z_upload_image_button button">' . __('Upload/Add image', 'zci') . '</button>
+		<button class="z_upload_image_button button">' . __( 'Upload/Add image', 'zci' ) . '</button>
 	</div>';
 }
 
-// add image field in edit form
-function z_edit_texonomy_field($taxonomy) {
+/**
+ * Adding the Image Upload Field on the Edit Taxonomy Form
+ */
+function z_edit_texonomy_field( $taxonomy ) {
 	if ( version_compare( get_bloginfo('version'), '3.5', '>=' ) ) {
 		wp_enqueue_media();
 	} else {
-		wp_enqueue_style('thickbox');
-		wp_enqueue_script('thickbox');
+		wp_enqueue_style( 'thickbox' );
+		wp_enqueue_script( 'thickbox' );
 	}
 	
-	if (z_taxonomy_image_url( $taxonomy->term_id, NULL, TRUE ) == Z_IMAGE_PLACEHOLDER) 
-		$image_text = "";
-	else
-		$image_text = z_taxonomy_image_url( $taxonomy->term_id, NULL, TRUE );
+	if ( z_taxonomy_image_url( (int) $taxonomy->term_id, NULL, TRUE ) == Z_IMAGE_PLACEHOLDER ) {
+		$image_text = '';
+	} else {
+		$image_text = z_taxonomy_image_url( (int) $taxonomy->term_id, NULL, TRUE );
+	}
 	echo '<tr class="form-field">
-		<th scope="row" valign="top"><label for="taxonomy_image">' . __('Image', 'zci') . '</label></th>
-		<td><img class="taxonomy-image" src="' . z_taxonomy_image_url( $taxonomy->term_id, NULL, TRUE ) . '"/><br/><input type="text" name="taxonomy_image" id="taxonomy_image" value="'.$image_text.'" /><br />
-		<button class="z_upload_image_button button">' . __('Upload/Add image', 'zci') . '</button>
-		<button class="z_remove_image_button button">' . __('Remove image', 'zci') . '</button>
+		<th scope="row" valign="top"><label for="taxonomy_image">' . __( 'Image', 'zci' ) . '</label></th>
+		<td><img class="taxonomy-image" src="' . z_taxonomy_image_url( (int) $taxonomy->term_id, NULL, TRUE ) . '"/><br/><input type="text" name="taxonomy_image" id="taxonomy_image" value="' . esc_url( $image_text ) . '" /><br />
+		<button class="z_upload_image_button button">' . __( 'Upload/Add image', 'zci' ) . '</button>
+		<button class="z_remove_image_button button">' . __( 'Remove image', 'zci' ) . '</button>
 		</td>
 	</tr>';
 }
