@@ -89,7 +89,7 @@ function z_add_texonomy_field() {
  * Adding the Image Upload Field on the Edit Taxonomy Form
  */
 function z_edit_texonomy_field( $taxonomy ) {
-	if ( version_compare( get_bloginfo('version'), '3.5', '>=' ) ) {
+	if ( version_compare( get_bloginfo( 'version' ), '3.5', '>=' ) ) {
 		wp_enqueue_media();
 	} else {
 		wp_enqueue_style( 'thickbox' );
@@ -111,12 +111,13 @@ function z_edit_texonomy_field( $taxonomy ) {
 }
 
 // save our taxonomy image while edit or save term
-add_action('edit_term','z_save_taxonomy_image');
-add_action('create_term','z_save_taxonomy_image');
-function z_save_taxonomy_image($term_id) {
-    if(isset($_POST['taxonomy_image']))
-        update_option('z_taxonomy_image'.$term_id, $_POST['taxonomy_image']);
+function z_save_taxonomy_image( $term_id ) {
+    if ( isset( $_POST['taxonomy_image'] ) ) {
+        update_option( 'z_taxonomy_image' . (int) $term_id, $_POST['taxonomy_image'] );
+   }
 }
+add_action( 'edit_term', 'z_save_taxonomy_image' );
+add_action( 'create_term', 'z_save_taxonomy_image' );
 
 // get attachment ID by image url
 function z_get_attachment_id_by_url($image_src) {
@@ -126,46 +127,53 @@ function z_get_attachment_id_by_url($image_src) {
     return (!empty($id)) ? $id : NULL;
 }
 
-// get taxonomy image url for the given term_id (Place holder image by default)
-function z_taxonomy_image_url($term_id = NULL, $size = NULL, $return_placeholder = FALSE) {
-	if (!$term_id) {
-		if (is_category())
-			$term_id = get_query_var('cat');
-		elseif (is_tax()) {
-			$current_term = get_term_by('slug', get_query_var('term'), get_query_var('taxonomy'));
+/**
+ * Return the URL for the taxonomy image
+ */
+function z_taxonomy_image_url( $term_id = NULL, $size = NULL, $return_placeholder = FALSE ) {
+	if ( ! $term_id ) {
+		if ( is_category() ) {
+			$term_id = get_query_var( 'cat' );
+		} elseif ( is_tax() ) {
+			$current_term = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
 			$term_id = $current_term->term_id;
 		}
 	}
 	
-    $taxonomy_image_url = get_option('z_taxonomy_image'.$term_id);
-    $attachment_id = z_get_attachment_id_by_url($taxonomy_image_url);
-    if(!empty($attachment_id)) {
-    	if (empty($size))
+    $taxonomy_image_url = get_option( 'z_taxonomy_image'. $term_id );
+    $attachment_id = z_get_attachment_id_by_url( $taxonomy_image_url );
+    if( ! empty( $attachment_id ) ) {
+    	if ( empty( $size ) ) {
     		$size = 'full';
-    	$taxonomy_image_url = wp_get_attachment_image_src($attachment_id, $size);
+    	}
+    	$taxonomy_image_url = wp_get_attachment_image_src( $attachment_id, $size );
 	    $taxonomy_image_url = $taxonomy_image_url[0];
     }
 
     if ($return_placeholder)
-		return ($taxonomy_image_url != '') ? $taxonomy_image_url : Z_IMAGE_PLACEHOLDER;
+		return esc_url( ( $taxonomy_image_url != '' ) ? $taxonomy_image_url : Z_IMAGE_PLACEHOLDER );
 	else
-		return $taxonomy_image_url;
+		return esc_url( $taxonomy_image_url );
 }
 
-function z_quick_edit_custom_box($column_name, $screen, $name) {
-	if ($column_name == 'thumb') 
+/**
+ * Add image editor and preview in the quick edit
+ */
+function z_quick_edit_custom_box( $column_name, $screen, $name ) {
+	if ( $column_name == 'thumb' ) {
 		echo '<fieldset>
 		<div class="thumb inline-edit-col">
 			<label>
 				<span class="title"><img src="" alt="Thumbnail"/></span>
 				<span class="input-text-wrap"><input type="text" name="taxonomy_image" value="" class="tax_list" /></span>
 				<span class="input-text-wrap">
-					<button class="z_upload_image_button button">' . __('Upload/Add image', 'zci') . '</button>
-					<button class="z_remove_image_button button">' . __('Remove image', 'zci') . '</button>
+					<button class="z_upload_image_button button">' . __( 'Upload/Add image', 'zci' ) . '</button>
+					<button class="z_remove_image_button button">' . __( 'Remove image', 'zci' ) . '</button>
 				</span>
 			</label>
 		</div>
-	</fieldset>';
+		</fieldset>';
+	}
 }
 
 /**
