@@ -23,6 +23,18 @@ if ( ! defined( 'Z_IMAGE_PLACEHOLDER' ) ) {
  */
 load_plugin_textdomain( 'zci', FALSE, 'categories-images/languages' );
 
+/**
+ * Load Scripts and Styles
+ */
+function z_load_scripts( $hook ) {
+	if ( $hook != 'edit-tags.php' ) {
+		return;
+	} else {
+		wp_enqueue_style( 'plugins-scripts-style', Z_PLUGIN_URL . '/css/categories-images.css', array(), '01032014' );
+	}
+}
+add_action( 'admin_enqueue_scripts', 'z_load_scripts' );
+
 add_action('admin_init', 'z_init');
 function z_init() {
 	$z_taxonomies = get_taxonomies();
@@ -40,16 +52,6 @@ function z_init() {
 			add_filter( 'manage_' . $z_taxonomy . '_custom_column', 'z_taxonomy_column', 10, 3 );
 	    }
 	}
-}
-
-function z_add_style() {
-	echo '<style type="text/css" media="screen">
-		th.column-thumb {width:60px;}
-		.form-field img.taxonomy-image {border:1px solid #eee;max-width:300px;max-height:300px;}
-		.inline-edit-row fieldset .thumb label span.title {width:48px;height:48px;border:1px solid #eee;display:inline-block;}
-		.column-thumb span {width:48px;height:48px;border:1px solid #eee;display:inline-block;}
-		.inline-edit-row fieldset .thumb img,.column-thumb img {width:48px;height:48px;}
-	</style>';
 }
 
 // add image field in add form
@@ -257,7 +259,6 @@ function z_change_insert_button_text($safe_text, $text) {
 
 // style the image in category list
 if ( strpos( $_SERVER['SCRIPT_NAME'], 'edit-tags.php' ) > 0 ) {
-	add_action( 'admin_head', 'z_add_style' );
 	add_action('quick_edit_custom_box', 'z_quick_edit_custom_box', 10, 3);
 	add_filter("attribute_escape", "z_change_insert_button_text", 10, 2);
 }
