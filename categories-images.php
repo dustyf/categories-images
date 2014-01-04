@@ -221,19 +221,25 @@ function z_options_menu() {
 }
 add_action( 'admin_menu', 'z_options_menu' );
 
-// Register plugin settings
+/**
+ * Register the settings section and fields
+ */
 function z_register_settings() {
 	register_setting( 'zci_options', 'zci_options', 'z_options_validate' );
 	add_settings_section( 'zci_settings', __( 'Categories Images settings', 'zci' ), 'z_section_text', 'zci-options' );
 	add_settings_field( 'z_excluded_taxonomies', __( 'Excluded Taxonomies', 'zci' ), 'z_excluded_taxonomies', 'zci-options', 'zci_settings' );
 }
 
-// Settings section description
+/**
+ * Add a description for the Settings Section
+ */
 function z_section_text() {
 	echo '<p>' . __( 'Please select the taxonomies you want to exclude it from Categories Images plugin', 'zci' ) . '</p>';
 }
 
-// Excluded taxonomies checkboxs
+/**
+ * Allow ability to exclude taxonomies
+ */
 function z_excluded_taxonomies() {
 	$options = get_option( 'zci_options' );
 	$disabled_taxonomies = array( 'nav_menu', 'link_category', 'post_format' );
@@ -245,12 +251,17 @@ function z_excluded_taxonomies() {
 	}
 }
 
-// Validating options
+/**
+ * Sanitize the values from the options page before saving them
+ */
 function z_options_validate( $input ) {
+	$input = array_map( 'sanitize_text_field', $input );
 	return $input;
 }
 
-// Plugin option page
+/**
+ * Callback to display the settings page
+ */
 function zci_options() {
 	if ( ! current_user_can( 'manage_options' ) )
 		wp_die( __( 'You do not have sufficient permissions to access this page.', 'zci' ) );
