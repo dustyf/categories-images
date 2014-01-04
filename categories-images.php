@@ -178,10 +178,6 @@ function z_quick_edit_custom_box( $column_name, $screen, $name ) {
 
 /**
  * Thumbnail column added to category admin.
- *
- * @access public
- * @param mixed $columns
- * @return void
  */
 function z_taxonomy_columns( $columns ) {
 	$new_columns = array();
@@ -195,76 +191,74 @@ function z_taxonomy_columns( $columns ) {
 
 /**
  * Thumbnail column value added to category admin.
- *
- * @access public
- * @param mixed $columns
- * @param mixed $column
- * @param mixed $id
- * @return void
  */
 function z_taxonomy_column( $columns, $column, $id ) {
 	if ( $column == 'thumb' )
-		$columns = '<span><img src="' . z_taxonomy_image_url($id, NULL, TRUE) . '" alt="' . __('Thumbnail', 'zci') . '" class="wp-post-image" /></span>';
+		$columns = '<span><img src="' . z_taxonomy_image_url( $id, NULL, TRUE ) . '" alt="' . __( 'Thumbnail', 'zci' ) . '" class="wp-post-image" /></span>';
 	
 	return $columns;
 }
 
-// change 'insert into post' to 'use this image'
-function z_change_insert_button_text($safe_text, $text) {
-    return str_replace("Insert into Post", "Use this image", $text);
+/**
+ * Change 'insert into post' to 'use this image'
+ */
+function z_change_insert_button_text( $safe_text, $text ) {
+    return str_replace( 'Insert into Post', 'Use this image', $text);
 }
 
 // style the image in category list
 if ( strpos( $_SERVER['SCRIPT_NAME'], 'edit-tags.php' ) > 0 ) {
-	add_action('quick_edit_custom_box', 'z_quick_edit_custom_box', 10, 3);
-	add_filter("attribute_escape", "z_change_insert_button_text", 10, 2);
+	add_action( 'quick_edit_custom_box', 'z_quick_edit_custom_box', 10, 3 );
+	add_filter( 'attribute_escape', 'z_change_insert_button_text', 10, 2 );
 }
 
-// New menu submenu for plugin options in Settings menu
-add_action('admin_menu', 'z_options_menu');
+/**
+ * Add a submenu page under Settings
+ */
 function z_options_menu() {
-	add_options_page(__('Categories Images settings', 'zci'), __('Categories Images', 'zci'), 'manage_options', 'zci-options', 'zci_options');
-	add_action('admin_init', 'z_register_settings');
+	add_options_page( __( 'Categories Images settings', 'zci' ), __( 'Categories Images', 'zci' ), 'manage_options', 'zci-options', 'zci_options');
+	add_action( 'admin_init', 'z_register_settings' );
 }
+add_action( 'admin_menu', 'z_options_menu' );
 
 // Register plugin settings
 function z_register_settings() {
-	register_setting('zci_options', 'zci_options', 'z_options_validate');
-	add_settings_section('zci_settings', __('Categories Images settings', 'zci'), 'z_section_text', 'zci-options');
-	add_settings_field('z_excluded_taxonomies', __('Excluded Taxonomies', 'zci'), 'z_excluded_taxonomies', 'zci-options', 'zci_settings');
+	register_setting( 'zci_options', 'zci_options', 'z_options_validate' );
+	add_settings_section( 'zci_settings', __( 'Categories Images settings', 'zci' ), 'z_section_text', 'zci-options' );
+	add_settings_field( 'z_excluded_taxonomies', __( 'Excluded Taxonomies', 'zci' ), 'z_excluded_taxonomies', 'zci-options', 'zci_settings' );
 }
 
 // Settings section description
 function z_section_text() {
-	echo '<p>'.__('Please select the taxonomies you want to exclude it from Categories Images plugin', 'zci').'</p>';
+	echo '<p>' . __( 'Please select the taxonomies you want to exclude it from Categories Images plugin', 'zci' ) . '</p>';
 }
 
 // Excluded taxonomies checkboxs
 function z_excluded_taxonomies() {
-	$options = get_option('zci_options');
-	$disabled_taxonomies = array('nav_menu', 'link_category', 'post_format');
-	foreach (get_taxonomies() as $tax) : if (in_array($tax, $disabled_taxonomies)) continue; ?>
-		<input type="checkbox" name="zci_options[excluded_taxonomies][<?php echo $tax ?>]" value="<?php echo $tax ?>" <?php checked(isset($options['excluded_taxonomies'][$tax])); ?> /> <?php echo $tax ;?><br />
+	$options = get_option( 'zci_options' );
+	$disabled_taxonomies = array( 'nav_menu', 'link_category', 'post_format' );
+	foreach ( get_taxonomies() as $tax ) : if ( in_array( $tax, $disabled_taxonomies ) ) continue; ?>
+		<input type="checkbox" name="zci_options[excluded_taxonomies][<?php echo $tax ?>]" value="<?php echo $tax ?>" <?php checked( isset( $options['excluded_taxonomies'][$tax] ) ); ?> /> <?php echo $tax ;?><br />
 	<?php endforeach;
 }
 
 // Validating options
-function z_options_validate($input) {
+function z_options_validate( $input ) {
 	return $input;
 }
 
 // Plugin option page
 function zci_options() {
-	if (!current_user_can('manage_options'))
-		wp_die(__( 'You do not have sufficient permissions to access this page.', 'zci'));
-		$options = get_option('zci_options');
+	if ( ! current_user_can( 'manage_options' ) )
+		wp_die( __( 'You do not have sufficient permissions to access this page.', 'zci' ) );
+		$options = get_option( 'zci_options' );
 	?>
 	<div class="wrap">
 		<?php screen_icon(); ?>
-		<h2><?php _e('Categories Images', 'zci'); ?></h2>
+		<h2><?php _e( 'Categories Images', 'zci' ); ?></h2>
 		<form method="post" action="options.php">
-			<?php settings_fields('zci_options'); ?>
-			<?php do_settings_sections('zci-options'); ?>
+			<?php settings_fields( 'zci_options' ); ?>
+			<?php do_settings_sections( 'zci-options' ); ?>
 			<?php submit_button(); ?>
 		</form>
 	</div>
