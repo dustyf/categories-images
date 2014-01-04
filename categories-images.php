@@ -80,6 +80,7 @@ function z_add_taxonomy_field() {
 		<label for="taxonomy_image">' . __( 'Image', 'zci' ) . '</label>
 		<input type="text" name="taxonomy_image" id="taxonomy_image" value="" />
 		<br/>
+		<input type="hidden" name="taxonomy_image_id" id="taxonomy_image_id value ="" />
 		<button class="z_upload_image_button button">' . __( 'Upload/Add image', 'zci' ) . '</button>
 	</div>';
 }
@@ -99,10 +100,11 @@ function z_edit_taxonomy_field( $taxonomy ) {
 		$image_text = '';
 	} else {
 		$image_text = z_taxonomy_image_url( (int) $taxonomy->term_id, NULL, TRUE );
-	}
+	} 
 	echo '<tr class="form-field">
 		<th scope="row" valign="top"><label for="taxonomy_image">' . __( 'Image', 'zci' ) . '</label></th>
 		<td><img class="taxonomy-image" src="' . z_taxonomy_image_url( (int) $taxonomy->term_id, NULL, TRUE ) . '"/><br/><input type="text" name="taxonomy_image" id="taxonomy_image" value="' . esc_url( $image_text ) . '" /><br />
+		<input type="text" name="taxonomy_image_id" id="taxonomy_image_id" value ="' . z_taxonomy_image_id( $taxonomy->term_id ) . '" />
 		<button class="z_upload_image_button button">' . __( 'Upload/Add image', 'zci' ) . '</button>
 		<button class="z_remove_image_button button">' . __( 'Remove image', 'zci' ) . '</button>
 		</td>
@@ -112,7 +114,11 @@ function z_edit_taxonomy_field( $taxonomy ) {
 // save our taxonomy image while edit or save term
 function z_save_taxonomy_image( $term_id ) {
     if ( isset( $_POST['taxonomy_image'] ) ) {
-        update_option( 'z_taxonomy_image' . (int) $term_id, $_POST['taxonomy_image'] );
+    	$options = array(
+    		'id' => $_POST['taxonomy_image_id'],
+    		'url' => $_POST['taxonomy_image']
+    	);
+        update_option( 'z_taxonomy_image' . (int) $term_id, $options );
    }
 }
 add_action( 'edit_term', 'z_save_taxonomy_image' );
@@ -127,10 +133,18 @@ function z_get_attachment_id_by_url($image_src) {
 }
 
 /**
+ * Return the array of taxonomy image data
+ */
+function z_taxonomy_image_data( $term_id ) {
+	$options = get_option( 'z_taxonomy_image'. (int) $term_id );
+	return $options;
+}
+
+/**
  * Return the URL for the taxonomy image
  */
-function z_taxonomy_image_url( $term_id = NULL, $size = NULL, $return_placeholder = FALSE ) {
-	if ( ! $term_id ) {
+function z_taxonomy_image_url( $term_id = '', $size = '', $return_placeholder = FALSE ) {
+	if ( empty( $term_id ) ) {
 		if ( is_category() ) {
 			$term_id = get_query_var( 'cat' );
 		} elseif ( is_tax() ) {
@@ -139,8 +153,9 @@ function z_taxonomy_image_url( $term_id = NULL, $size = NULL, $return_placeholde
 		}
 	}
 	
-    $taxonomy_image_url = get_option( 'z_taxonomy_image'. (int) $term_id );
-    $attachment_id = z_get_attachment_id_by_url( $taxonomy_image_url );
+	$taxonomy_image_data = z_taxonomy_image_data( $term_id );
+    $taxonomy_image_url = $taxonomy_image_data['url'];
+    $attachment_id = $taxonomy_image_data['id'];
     if( ! empty( $attachment_id ) ) {
     	if ( empty( $size ) ) {
     		$size = 'full';
@@ -153,6 +168,23 @@ function z_taxonomy_image_url( $term_id = NULL, $size = NULL, $return_placeholde
 		return esc_url( ( $taxonomy_image_url != '' ) ? $taxonomy_image_url : Z_IMAGE_PLACEHOLDER );
 	else
 		return esc_url( $taxonomy_image_url );
+}
+
+/**
+ * Return the ID for the taxonomy image
+ */
+function z_taxonomy_image_id( $term_id ) {
+	if ( empty( $term_id ) ) {
+		if ( is_category() ) {
+			$term_id = get_query_var( 'cat' );
+		} elseif ( is_tax() ) {
+			$current_term = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
+			$term_id = $current_term->term_id;
+		}
+	}
+	$taxonomy_image_data = z_taxonomy_image_data( $term_id );
+	$attachment_id = $taxonomy_image_data['id'];
+	return $attachment_id;
 }
 
 /**

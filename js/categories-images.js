@@ -14,12 +14,14 @@ jQuery(document).ready(function($) {
 				// Grab the selected attachment.
 				var attachment = frame.state().get("selection").first();
 				frame.close();
+				// Quick Edit
 				if (upload_button.parent().prev().children().hasClass("tax_list")) {
 					upload_button.parent().prev().children().val(attachment.attributes.url);
 					upload_button.parent().prev().prev().children().attr("src", attachment.attributes.url);
-				}
-				else
+				} else {
 					$("#taxonomy_image").val(attachment.attributes.url);
+					$('#taxonomy_image_id').val(attachment.id);
+				}
 			});
 			frame.open();
 		}
@@ -31,7 +33,8 @@ jQuery(document).ready(function($) {
 
 	$(".z_remove_image_button").click(function() {
 		$("#taxonomy_image").val("");
-		$(this).parent().siblings(".title").children("img").attr("src","zciparams.imageplaceholder");
+		$('img.taxonomy-image').attr('src', zciparams.imageplaceholder);
+		//$(this).parent().siblings(".title").children("img").attr("src","zciparams.imageplaceholder");
 		$(".inline-edit-col :input[name='taxonomy_image']").val("");
 		return false;
 	});
