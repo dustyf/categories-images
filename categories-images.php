@@ -7,15 +7,21 @@
  * Version: 2.4.1
  * Author URI: http://zahlan.net/
  */
-?>
-<?php
-if (!defined('Z_PLUGIN_URL'))
-	define('Z_PLUGIN_URL', untrailingslashit(plugins_url('', __FILE__)));
 
-define('Z_IMAGE_PLACEHOLDER', Z_PLUGIN_URL."/images/placeholder.png");
+/**
+ * Define plugin URL and Placeholder URL constants
+ */
+if ( ! defined( 'Z_PLUGIN_URL' ) ) {
+	define( 'Z_PLUGIN_URL', untrailingslashit( plugins_url( '', __FILE__ ) ) );
+}
+if ( ! defined( 'Z_IMAGE_PLACEHOLDER' ) ) {
+	define('Z_IMAGE_PLACEHOLDER', Z_PLUGIN_URL . '/images/placeholder.png' );
+}
 
-// l10n
-load_plugin_textdomain('zci', FALSE, 'categories-images/languages');
+/**
+ * Localization
+ */
+load_plugin_textdomain( 'zci', FALSE, 'categories-images/languages' );
 
 add_action('admin_init', 'z_init');
 function z_init() {
