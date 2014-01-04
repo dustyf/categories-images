@@ -30,7 +30,13 @@ function z_load_scripts( $hook ) {
 	if ( $hook != 'edit-tags.php' ) {
 		return;
 	} else {
-		wp_enqueue_style( 'plugins-scripts-style', Z_PLUGIN_URL . '/css/categories-images.css', array(), '01032014' );
+		wp_enqueue_style( 'categories-images-style', Z_PLUGIN_URL . '/css/categories-images.css', array(), '01032014' );
+		wp_enqueue_script( 'categories-images', Z_PLUGIN_URL . '/js/categories-images.js', array( 'jquery' ), '01032014', false );
+		$params = array(
+			'wpversion' => get_bloginfo( 'version' ),
+			'imageplaceholder' => Z_IMAGE_PLACEHOLDER
+		);
+		wp_localize_script( 'categories-images', 'zciparams', $params );
 	}
 }
 add_action( 'admin_enqueue_scripts', 'z_load_scripts' );
@@ -68,7 +74,7 @@ function z_add_texonomy_field() {
 		<input type="text" name="taxonomy_image" id="taxonomy_image" value="" />
 		<br/>
 		<button class="z_upload_image_button button">' . __('Upload/Add image', 'zci') . '</button>
-	</div>'.z_script();
+	</div>';
 }
 
 // add image field in edit form
@@ -90,75 +96,7 @@ function z_edit_texonomy_field($taxonomy) {
 		<button class="z_upload_image_button button">' . __('Upload/Add image', 'zci') . '</button>
 		<button class="z_remove_image_button button">' . __('Remove image', 'zci') . '</button>
 		</td>
-	</tr>'.z_script();
-}
-// upload using wordpress upload
-function z_script() {
-	return '<script type="text/javascript">
-	    jQuery(document).ready(function($) {
-			var wordpress_ver = "'.get_bloginfo("version").'", upload_button;
-			$(".z_upload_image_button").click(function(event) {
-				upload_button = $(this);
-				var frame;
-				if (wordpress_ver >= "3.5") {
-					event.preventDefault();
-					if (frame) {
-						frame.open();
-						return;
-					}
-					frame = wp.media();
-					frame.on( "select", function() {
-						// Grab the selected attachment.
-						var attachment = frame.state().get("selection").first();
-						frame.close();
-						if (upload_button.parent().prev().children().hasClass("tax_list")) {
-							upload_button.parent().prev().children().val(attachment.attributes.url);
-							upload_button.parent().prev().prev().children().attr("src", attachment.attributes.url);
-						}
-						else
-							$("#taxonomy_image").val(attachment.attributes.url);
-					});
-					frame.open();
-				}
-				else {
-					tb_show("", "media-upload.php?type=image&amp;TB_iframe=true");
-					return false;
-				}
-			});
-			
-			$(".z_remove_image_button").click(function() {
-				$("#taxonomy_image").val("");
-				$(this).parent().siblings(".title").children("img").attr("src","' . Z_IMAGE_PLACEHOLDER . '");
-				$(".inline-edit-col :input[name=\'taxonomy_image\']").val("");
-				return false;
-			});
-			
-			if (wordpress_ver < "3.5") {
-				window.send_to_editor = function(html) {
-					imgurl = $("img",html).attr("src");
-					if (upload_button.parent().prev().children().hasClass("tax_list")) {
-						upload_button.parent().prev().children().val(imgurl);
-						upload_button.parent().prev().prev().children().attr("src", imgurl);
-					}
-					else
-						$("#taxonomy_image").val(imgurl);
-					tb_remove();
-				}
-			}
-			
-			$(".editinline").live("click", function(){  
-			    var tax_id = $(this).parents("tr").attr("id").substr(4);
-			    var thumb = $("#tag-"+tax_id+" .thumb img").attr("src");
-				if (thumb != "' . Z_IMAGE_PLACEHOLDER . '") {
-					$(".inline-edit-col :input[name=\'taxonomy_image\']").val(thumb);
-				} else {
-					$(".inline-edit-col :input[name=\'taxonomy_image\']").val("");
-				}
-				$(".inline-edit-col .title img").attr("src",thumb);
-			    return false;  
-			});  
-	    });
-	</script>';
+	</tr>';
 }
 
 // save our taxonomy image while edit or save term
