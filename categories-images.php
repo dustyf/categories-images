@@ -140,7 +140,7 @@ function z_taxonomy_image_url( $term_id = NULL, $size = NULL, $return_placeholde
 		}
 	}
 	
-    $taxonomy_image_url = get_option( 'z_taxonomy_image'. $term_id );
+    $taxonomy_image_url = get_option( 'z_taxonomy_image'. (int) $term_id );
     $attachment_id = z_get_attachment_id_by_url( $taxonomy_image_url );
     if( ! empty( $attachment_id ) ) {
     	if ( empty( $size ) ) {
@@ -237,9 +237,12 @@ function z_section_text() {
 function z_excluded_taxonomies() {
 	$options = get_option( 'zci_options' );
 	$disabled_taxonomies = array( 'nav_menu', 'link_category', 'post_format' );
-	foreach ( get_taxonomies() as $tax ) : if ( in_array( $tax, $disabled_taxonomies ) ) continue; ?>
-		<input type="checkbox" name="zci_options[excluded_taxonomies][<?php echo $tax ?>]" value="<?php echo $tax ?>" <?php checked( isset( $options['excluded_taxonomies'][$tax] ) ); ?> /> <?php echo $tax ;?><br />
-	<?php endforeach;
+	foreach ( get_taxonomies() as $tax ) {
+		if ( in_array( $tax, $disabled_taxonomies ) ) { 
+			continue;
+		} 
+		echo '<input type="checkbox" name="zci_options[excluded_taxonomies][' . esc_attr( $tax ) . ']" value="' . esc_attr( $tax ) . '" ' . ( isset( $options['excluded_taxonomies'][$tax] ) ? checked( $options['excluded_taxonomies'][$tax], $tax, false ) : '' ) . ' /> ' . esc_html( $tax ) . '<br />';
+	}
 }
 
 // Validating options
