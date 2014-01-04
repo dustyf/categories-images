@@ -56,8 +56,8 @@ function z_init() {
 			if ( in_array( $z_taxonomy, $zci_options['excluded_taxonomies'] ) ) {
 				continue;
 			}
-	        add_action( $z_taxonomy . '_add_form_fields', 'z_add_texonomy_field' );
-			add_action( $z_taxonomy . '_edit_form_fields', 'z_edit_texonomy_field' );
+	        add_action( $z_taxonomy . '_add_form_fields', 'z_add_taxonomy_field' );
+			add_action( $z_taxonomy . '_edit_form_fields', 'z_edit_taxonomy_field' );
 			add_filter( 'manage_edit-' . $z_taxonomy . '_columns', 'z_taxonomy_columns' );
 			add_filter( 'manage_' . $z_taxonomy . '_custom_column', 'z_taxonomy_column', 10, 3 );
 	    }
@@ -68,7 +68,7 @@ add_action( 'admin_init', 'z_init' );
 /**
  * Adding the Image Upload Field on the Add New Taxonomy Form
  */
-function z_add_texonomy_field() {
+function z_add_taxonomy_field() {
 	if ( version_compare( get_bloginfo( 'version' ), '3.5', '>=' ) ) {
 		wp_enqueue_media();
 	} else {
@@ -87,7 +87,7 @@ function z_add_texonomy_field() {
 /**
  * Adding the Image Upload Field on the Edit Taxonomy Form
  */
-function z_edit_texonomy_field( $taxonomy ) {
+function z_edit_taxonomy_field( $taxonomy ) {
 	if ( version_compare( get_bloginfo( 'version' ), '3.5', '>=' ) ) {
 		wp_enqueue_media();
 	} else {
