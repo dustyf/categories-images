@@ -159,21 +159,24 @@ function z_taxonomy_image_url( $term_id = NULL, $size = NULL, $return_placeholde
  * Add image editor and preview in the quick edit
  */
 function z_quick_edit_custom_box( $column_name, $screen, $name ) {
-	if ( $column_name == 'thumb' ) {
-		echo '<fieldset>
-		<div class="thumb inline-edit-col">
-			<label>
-				<span class="title"><img src="" alt="Thumbnail"/></span>
-				<span class="input-text-wrap"><input type="text" name="taxonomy_image" value="" class="tax_list" /></span>
-				<span class="input-text-wrap">
-					<button class="z_upload_image_button button">' . __( 'Upload/Add image', 'zci' ) . '</button>
-					<button class="z_remove_image_button button">' . __( 'Remove image', 'zci' ) . '</button>
-				</span>
-			</label>
-		</div>
-		</fieldset>';
+	if ( get_current_screen()->id == 'edit-post_tag' ) {
+		if ( $column_name == 'thumb' ) {
+			echo '<fieldset>
+			<div class="thumb inline-edit-col">
+				<label>
+					<span class="title"><img src="" alt="Thumbnail"/></span>
+					<span class="input-text-wrap"><input type="text" name="taxonomy_image" value="" class="tax_list" /></span>
+					<span class="input-text-wrap">
+						<button class="z_upload_image_button button">' . __( 'Upload/Add image', 'zci' ) . '</button>
+						<button class="z_remove_image_button button">' . __( 'Remove image', 'zci' ) . '</button>
+					</span>
+				</label>
+			</div>
+			</fieldset>';
+		}
 	}
 }
+add_action( 'quick_edit_custom_box', 'z_quick_edit_custom_box', 10, 3 );
 
 /**
  * Thumbnail column added to category admin.
@@ -200,16 +203,12 @@ function z_taxonomy_column( $columns, $column, $id ) {
 
 /**
  * Change 'insert into post' to 'use this image'
+ * TODO use gettext filter instead
  */
 function z_change_insert_button_text( $safe_text, $text ) {
-    return str_replace( 'Insert into Post', 'Use this image', $text);
+	    return str_replace( 'Insert into Post', 'Use this image', $text);
 }
-
-// style the image in category list
-if ( strpos( $_SERVER['SCRIPT_NAME'], 'edit-tags.php' ) > 0 ) {
-	add_action( 'quick_edit_custom_box', 'z_quick_edit_custom_box', 10, 3 );
-	add_filter( 'attribute_escape', 'z_change_insert_button_text', 10, 2 );
-}
+add_filter( 'attribute_escape', 'z_change_insert_button_text', 10, 2 );
 
 /**
  * Add a submenu page under Settings
