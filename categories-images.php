@@ -47,12 +47,11 @@ add_action( 'admin_enqueue_scripts', 'z_load_scripts' );
  */
 function z_init() {
 	$z_taxonomies = get_taxonomies();
-	if ( is_array( $z_taxonomies ) ) {
+	if ( is_array( $z_taxonomies ) ) { 
 		$zci_options = get_option( 'zci_options' );
 		if ( empty( $zci_options['excluded_taxonomies'] ) ) {
 			$zci_options['excluded_taxonomies'] = array();
 		}
-		
 	    foreach ( $z_taxonomies as $z_taxonomy ) {
 			if ( in_array( $z_taxonomy, $zci_options['excluded_taxonomies'] ) ) {
 				continue;
@@ -255,7 +254,7 @@ function z_excluded_taxonomies() {
  * Sanitize the values from the options page before saving them
  */
 function z_options_validate( $input ) {
-	$input = array_map( 'sanitize_text_field', $input );
+	$input['excluded_taxonomies'] = array_map( 'sanitize_text_field', $input['excluded_taxonomies'] );
 	return $input;
 }
 
@@ -263,9 +262,10 @@ function z_options_validate( $input ) {
  * Callback to display the settings page
  */
 function zci_options() {
-	if ( ! current_user_can( 'manage_options' ) )
+	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( __( 'You do not have sufficient permissions to access this page.', 'zci' ) );
-		$options = get_option( 'zci_options' );
+	}
+	$options = get_option( 'zci_options' );
 	?>
 	<div class="wrap">
 		<?php screen_icon(); ?>
