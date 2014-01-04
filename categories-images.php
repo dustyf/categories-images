@@ -41,25 +41,30 @@ function z_load_scripts( $hook ) {
 }
 add_action( 'admin_enqueue_scripts', 'z_load_scripts' );
 
-
+/**
+ * Finding all of the taxonomies, removing any declared as excluded,
+ * then adding form fields and columns for them
+ */
 function z_init() {
 	$z_taxonomies = get_taxonomies();
-	if (is_array($z_taxonomies)) {
-		$zci_options = get_option('zci_options');
-		if (empty($zci_options['excluded_taxonomies']))
+	if ( is_array( $z_taxonomies ) ) {
+		$zci_options = get_option( 'zci_options' );
+		if ( empty( $zci_options['excluded_taxonomies'] ) ) {
 			$zci_options['excluded_taxonomies'] = array();
+		}
 		
-	    foreach ($z_taxonomies as $z_taxonomy) {
-			if (in_array($z_taxonomy, $zci_options['excluded_taxonomies']))
+	    foreach ( $z_taxonomies as $z_taxonomy ) {
+			if ( in_array( $z_taxonomy, $zci_options['excluded_taxonomies'] ) ) {
 				continue;
-	        add_action($z_taxonomy.'_add_form_fields', 'z_add_texonomy_field');
-			add_action($z_taxonomy.'_edit_form_fields', 'z_edit_texonomy_field');
+			}
+	        add_action( $z_taxonomy . '_add_form_fields', 'z_add_texonomy_field' );
+			add_action( $z_taxonomy . '_edit_form_fields', 'z_edit_texonomy_field' );
 			add_filter( 'manage_edit-' . $z_taxonomy . '_columns', 'z_taxonomy_columns' );
 			add_filter( 'manage_' . $z_taxonomy . '_custom_column', 'z_taxonomy_column', 10, 3 );
 	    }
 	}
 }
-add_action('admin_init', 'z_init');
+add_action( 'admin_init', 'z_init' );
 
 // add image field in add form
 function z_add_texonomy_field() {
