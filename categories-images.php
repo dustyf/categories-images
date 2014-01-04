@@ -41,7 +41,7 @@ function z_load_scripts( $hook ) {
 }
 add_action( 'admin_enqueue_scripts', 'z_load_scripts' );
 
-add_action('admin_init', 'z_init');
+
 function z_init() {
 	$z_taxonomies = get_taxonomies();
 	if (is_array($z_taxonomies)) {
@@ -59,12 +59,13 @@ function z_init() {
 	    }
 	}
 }
+add_action('admin_init', 'z_init');
 
 // add image field in add form
 function z_add_texonomy_field() {
-	if (get_bloginfo('version') >= 3.5)
+	if ( version_compare( get_bloginfo('version'), '3.5', '>=' ) ) {
 		wp_enqueue_media();
-	else {
+	} else {
 		wp_enqueue_style('thickbox');
 		wp_enqueue_script('thickbox');
 	}
@@ -79,9 +80,9 @@ function z_add_texonomy_field() {
 
 // add image field in edit form
 function z_edit_texonomy_field($taxonomy) {
-	if (get_bloginfo('version') >= 3.5)
+	if ( version_compare( get_bloginfo('version'), '3.5', '>=' ) ) {
 		wp_enqueue_media();
-	else {
+	} else {
 		wp_enqueue_style('thickbox');
 		wp_enqueue_script('thickbox');
 	}
