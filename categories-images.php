@@ -95,14 +95,14 @@ function z_edit_taxonomy_field( $taxonomy ) {
 		wp_enqueue_script( 'thickbox' );
 	}
 	
-	if ( z_taxonomy_image_url( (int) $taxonomy->term_id, NULL, TRUE ) == Z_IMAGE_PLACEHOLDER ) {
+	if ( z_taxonomy_image_url( (int) $taxonomy->term_id, '', TRUE ) == Z_IMAGE_PLACEHOLDER ) {
 		$image_text = '';
 	} else {
-		$image_text = z_taxonomy_image_url( (int) $taxonomy->term_id, NULL, TRUE );
+		$image_text = z_taxonomy_image_url( (int) $taxonomy->term_id, '', TRUE );
 	} 
 	echo '<tr class="form-field">
 		<th scope="row" valign="top"><label for="taxonomy_image">' . __( 'Image', 'zci' ) . '</label></th>
-		<td><img class="taxonomy-image" src="' . z_taxonomy_image_url( (int) $taxonomy->term_id, NULL, TRUE ) . '"/><br />
+		<td><img class="taxonomy-image" src="' . z_taxonomy_image_url( (int) $taxonomy->term_id, '', TRUE ) . '"/><br />
 		<input type="hidden" name="taxonomy_image" id="taxonomy_image" value="' . esc_url( $image_text ) . '" />
 		<input type="hidden" name="taxonomy_image_id" id="taxonomy_image_id" value ="' . z_taxonomy_image_id( $taxonomy->term_id ) . '" />
 		<button class="z_upload_image_button button">' . __( 'Upload/Add image', 'zci' ) . '</button>
@@ -223,7 +223,7 @@ function z_taxonomy_columns( $columns ) {
  */
 function z_taxonomy_column( $columns, $column, $id ) {
 	if ( $column == 'thumb' )
-		$columns = '<span><img src="' . z_taxonomy_image_url( $id, NULL, TRUE ) . '" alt="' . __( 'Thumbnail', 'zci' ) . '" class="wp-post-image" /></span>';
+		$columns = '<span><img src="' . z_taxonomy_image_url( $id, '', TRUE ) . '" alt="' . __( 'Thumbnail', 'zci' ) . '" class="wp-post-image" /></span>';
 	
 	return $columns;
 }
@@ -253,6 +253,7 @@ function z_register_settings() {
 	register_setting( 'zci_options', 'zci_options', 'z_options_validate' );
 	add_settings_section( 'zci_settings', __( 'Categories Images settings', 'zci' ), 'z_section_text', 'zci-options' );
 	add_settings_field( 'z_excluded_taxonomies', __( 'Excluded Taxonomies', 'zci' ), 'z_excluded_taxonomies', 'zci-options', 'zci_settings' );
+	//add_settings_field( 'z_placheolder_image', __( 'Placeholder Image', 'zci' ), 'z_placeholder_image', 'zci-options', 'zci_settings' );
 }
 
 /**
