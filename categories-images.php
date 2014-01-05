@@ -186,13 +186,13 @@ function z_taxonomy_image_id( $term_id ) {
  * Add image editor and preview in the quick edit
  */
 function z_quick_edit_custom_box( $column_name, $screen, $name ) {
-	if ( get_current_screen()->id == 'edit-post_tag' ) {
-		if ( $column_name == 'thumb' ) {
+	if ( get_current_screen()->id == 'edit-post_tag' || get_current_screen()->id == 'edit-category' ) {
+		if ( $column_name == 'thumb' ) { var_dump();
 			echo '<fieldset>
 			<div class="thumb inline-edit-col">
 				<label>
-					<span class="title"><img src="" alt="Thumbnail"/></span>
-					<span class="input-text-wrap"><input type="text" name="taxonomy_image" value="" class="tax_list" /></span>
+					<span class="title"><img src="' . z_taxonomy_image_url() . '" alt="Thumbnail"/></span>
+					<span class="input-text-wrap"><input type="hidden" name="taxonomy_image" value="" class="tax_list" /></span>
 					<span class="input-text-wrap">
 						<button class="z_upload_image_button button">' . __( 'Upload/Add image', 'zci' ) . '</button>
 						<button class="z_remove_image_button button">' . __( 'Remove image', 'zci' ) . '</button>
@@ -230,12 +230,18 @@ function z_taxonomy_column( $columns, $column, $id ) {
 
 /**
  * Change 'insert into post' to 'use this image'
- * TODO use gettext filter instead
  */
-function z_change_insert_button_text( $safe_text, $text ) {
-	    return str_replace( 'Insert into Post', 'Use this image', $text);
+function z_change_insert_button_text( $translated_text, $untranslated_text, $domain ) {
+	if ( get_current_screen()->id == 'edit-post_tag' || get_current_screen()->id == 'edit-category' ) {
+	    switch( $untranslated_text ) {
+	        case 'Insert into Post':
+	          $translated_text = __( 'Use this image','zci' );
+	        break;
+	    }
+	}
+	return $translated_text;
 }
-add_filter( 'attribute_escape', 'z_change_insert_button_text', 10, 2 );
+add_filter( 'getttext', 'z_change_insert_button_text', 20, 3 );
 
 /**
  * Add a submenu page under Settings
