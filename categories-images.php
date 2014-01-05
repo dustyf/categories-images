@@ -111,7 +111,9 @@ function z_edit_taxonomy_field( $taxonomy ) {
 	</tr>';
 }
 
-// save our taxonomy image while edit or save term
+/**
+ * Save the image data
+ */
 function z_save_taxonomy_image( $term_id ) {
     if ( isset( $_POST['taxonomy_image'] ) ) {
     	$options = array(
@@ -123,14 +125,6 @@ function z_save_taxonomy_image( $term_id ) {
 }
 add_action( 'edit_term', 'z_save_taxonomy_image' );
 add_action( 'create_term', 'z_save_taxonomy_image' );
-
-// get attachment ID by image url
-function z_get_attachment_id_by_url($image_src) {
-    global $wpdb;
-    $query = "SELECT ID FROM {$wpdb->posts} WHERE guid = '$image_src'";
-    $id = $wpdb->get_var($query);
-    return (!empty($id)) ? $id : NULL;
-}
 
 /**
  * Return the array of taxonomy image data
