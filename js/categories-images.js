@@ -21,6 +21,7 @@ jQuery(document).ready(function($) {
 				} else {
 					$("#taxonomy_image").val(attachment.attributes.url);
 					$('#taxonomy_image_id').val(attachment.id);
+					$('img.taxonomy-image').attr('src',attachment.attributes.url);
 				}
 			});
 			frame.open();
@@ -34,7 +35,6 @@ jQuery(document).ready(function($) {
 	$(".z_remove_image_button").click(function() {
 		$("#taxonomy_image").val("");
 		$('img.taxonomy-image').attr('src', zciparams.imageplaceholder);
-		//$(this).parent().siblings(".title").children("img").attr("src","zciparams.imageplaceholder");
 		$(".inline-edit-col :input[name='taxonomy_image']").val("");
 		return false;
 	});

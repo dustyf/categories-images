@@ -104,7 +104,7 @@ function z_edit_taxonomy_field( $taxonomy ) {
 	echo '<tr class="form-field">
 		<th scope="row" valign="top"><label for="taxonomy_image">' . __( 'Image', 'zci' ) . '</label></th>
 		<td><img class="taxonomy-image" src="' . z_taxonomy_image_url( (int) $taxonomy->term_id, NULL, TRUE ) . '"/><br/><input type="text" name="taxonomy_image" id="taxonomy_image" value="' . esc_url( $image_text ) . '" /><br />
-		<input type="text" name="taxonomy_image_id" id="taxonomy_image_id" value ="' . z_taxonomy_image_id( $taxonomy->term_id ) . '" />
+		<input type="hidden" name="taxonomy_image_id" id="taxonomy_image_id" value ="' . z_taxonomy_image_id( $taxonomy->term_id ) . '" />
 		<button class="z_upload_image_button button">' . __( 'Upload/Add image', 'zci' ) . '</button>
 		<button class="z_remove_image_button button">' . __( 'Remove image', 'zci' ) . '</button>
 		</td>
