@@ -117,8 +117,8 @@ function z_edit_taxonomy_field( $taxonomy ) {
 function z_save_taxonomy_image( $term_id ) {
     if ( isset( $_POST['taxonomy_image'] ) ) {
     	$options = array(
-    		'id' => $_POST['taxonomy_image_id'],
-    		'url' => $_POST['taxonomy_image']
+    		'id' => (int) $_POST['taxonomy_image_id'],
+    		'url' => esc_url( $_POST['taxonomy_image'] )
     	);
         update_option( 'z_taxonomy_image' . (int) $term_id, $options );
    }
@@ -179,31 +179,8 @@ function z_taxonomy_image_id( $term_id ) {
 	}
 	$taxonomy_image_data = z_taxonomy_image_data( $term_id );
 	$attachment_id = $taxonomy_image_data['id'];
-	return $attachment_id;
+	return (int) $attachment_id;
 }
-
-/**
- * Add image editor and preview in the quick edit
- */
-function z_quick_edit_custom_box( $column_name, $screen, $name ) {
-	if ( get_current_screen()->id == 'edit-post_tag' || get_current_screen()->id == 'edit-category' ) {
-		if ( $column_name == 'thumb' ) { var_dump();
-			echo '<fieldset>
-			<div class="thumb inline-edit-col">
-				<label>
-					<span class="title"><img src="' . z_taxonomy_image_url() . '" alt="Thumbnail"/></span>
-					<span class="input-text-wrap"><input type="hidden" name="taxonomy_image" value="" class="tax_list" /></span>
-					<span class="input-text-wrap">
-						<button class="z_upload_image_button button">' . __( 'Upload/Add image', 'zci' ) . '</button>
-						<button class="z_remove_image_button button">' . __( 'Remove image', 'zci' ) . '</button>
-					</span>
-				</label>
-			</div>
-			</fieldset>';
-		}
-	}
-}
-add_action( 'quick_edit_custom_box', 'z_quick_edit_custom_box', 10, 3 );
 
 /**
  * Thumbnail column added to category admin.
